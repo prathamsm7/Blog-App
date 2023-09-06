@@ -15,7 +15,15 @@ app.use(cookieParser());
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
+app.use(
+  cors({
+    credentials: true,
+    origin: [
+      "http://localhost:5173",
+      "https://funny-belekoy-ecd356.netlify.app",
+    ],
+  })
+);
 
 app.use("/api/user", userRoutes);
 app.use("/api/post", postRoutes);
