@@ -66,8 +66,7 @@ exports.getPostById = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id)
       .populate("postedBy", "_id name email username")
-      .populate("likes")
-      .populate({ path: "comments" });
+      .populate("likes");
 
     if (!post) {
       return res.status(404).send({ message: "Post not found" });
