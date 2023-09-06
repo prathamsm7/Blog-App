@@ -16,21 +16,90 @@ export const getPosts = createAsyncThunk("post/getAll", async () => {
   }
 });
 
+export const updatePost = createAsyncThunk(
+  "post/updatePost",
+  async (data, { rejectWithValue }) => {
+    try {
+      const { id, title, text } = data;
+      const response = await axios.patch(
+        `http://localhost:8080/api/post/update/${id}`,
+        { title, text },
+        { withCredentials: true }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const deletePost = createAsyncThunk(
+  "post/deletePost",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:8080/api/post/${id}`,
+        { withCredentials: true }
+      );
+      return id;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const blogSlice = createSlice({
   name: "blog",
   initialState,
   extraReducers: (builder) => {
     builder.addCase(getPosts.pending, (state, action) => {
       state.isLoading = true;
-      state.message = "";
+      state.isError = false;
     }),
       builder.addCase(getPosts.fulfilled, (state, action) => {
         state.blogs = action.payload;
-
         state.isLoading = false;
         state.isError = false;
       }),
       builder.addCase(getPosts.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+      });
+    builder.addCase(updatePost.pending, (state, action) => {
+      state.isLoading = true;
+      state.isError = false;
+    }),
+      builder.addCase(updatePost.fulfilled, (state, action) => {
+        let filterData = state.blogs.map((post) => {
+          if (post._id == action.payload._id) {
+            post = action.payload;
+          }
+          return post;
+        });
+
+        state.blogs = filterData;
+        state.isLoading = false;
+        state.isError = false;
+      }),
+      builder.addCase(updatePost.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+      });
+
+    builder.addCase(deletePost.pending, (state, action) => {
+      state.isLoading = true;
+      state.isError = false;
+    }),
+      builder.addCase(deletePost.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+
+        let filterData = state.blogs.filter((post) => {
+          return post._id !== action.payload;
+        });
+        state.blogs = filterData;
+      }),
+      builder.addCase(deletePost.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
       });
