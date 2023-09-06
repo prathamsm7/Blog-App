@@ -3,8 +3,6 @@ import axios from "axios";
 
 const apiId = import.meta.env.VITE_API;
 
-console.log("api", apiId);
-
 const initialState = {
   blogs: [],
   isLoading: false,
@@ -49,10 +47,8 @@ export const createPost = createAsyncThunk(
         { title, text },
         { withCredentials: true }
       );
-      console.log(response.data);
       return response.data;
     } catch (error) {
-      console.log(error);
       return rejectWithValue(error.response.data);
     }
   }

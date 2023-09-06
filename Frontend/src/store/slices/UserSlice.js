@@ -45,7 +45,6 @@ export const userLogout = createAsyncThunk("userLogout", async () => {
   const response = await axios.get(`${apiId}/user/logout`, {
     withCredentials: true,
   });
-  console.log(response);
   return response.data;
 });
 
@@ -94,7 +93,6 @@ const userSlice = createSlice({
       state.isLoading = false;
     });
     builder.addCase(userLogout.rejected, (state, action) => {
-      console.log("rejected err", action);
       state.isLoading = false;
       state.isError = true;
     });

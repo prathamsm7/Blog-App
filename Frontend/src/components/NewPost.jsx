@@ -2,10 +2,15 @@ import axios from "axios";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createPost } from "../store/slices/BlogSlics";
+import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 
 function NewPost() {
   const [blog, setBlog] = useState({ title: "", text: "" });
+  const { isLoading } = useSelector((store) => store.blogs);
+
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { title, text } = blog;
 
@@ -19,30 +24,31 @@ function NewPost() {
     let trimText = removeExtraSpaces(text);
 
     if (trimTitle.length < 30) {
-      alert("Please enter blog title more than 30 characters");
+      toast.error("Please enter blog title more than 30 characters");
       return;
     }
 
     if (trimText.length < 300) {
-      alert("Please enter blog text more than 300 characters");
+      toast("Please enter blog text more than 300 characters");
       return;
     }
 
     const response = dispatch(createPost({ title: trimTitle, text: trimText }));
-    response
-      .then(() => {
-        setBlog({ title: "", text: "" });
-        setTimeout(() => {
-          navigate("/");
-        }, 1000);
-      })
-      .catch(() => {
-        setBlog({ title: "", text: "" });
-      });
+
+    response.then((res) => {
+      setBlog({ title: "", text: "" });
+      if (res.meta.requestStatus == "fulfilled") {
+        toast.success("Post Created Succesfully");
+      } else {
+        toast.error(res.payload.message);
+      }
+    });
   }
 
   return (
     <main className="px-8 py-8">
+      <ToastContainer />
+
       <h1 className="text-3xl font-bold">Create New Blog Post</h1>
 
       <form action="" className="mt-5" onSubmit={handleSubmit}>
@@ -53,6 +59,7 @@ function NewPost() {
           value={title}
           onChange={(e) => setBlog({ ...blog, title: e.target.value })}
           minLength={50}
+          placeholder="Enter Post Title"
           required
         />
         <label className="block text-sm font-bold mb-1">Blog Text</label>
@@ -65,10 +72,13 @@ function NewPost() {
           minLength="300"
           pattern=".{300,}"
           required
-          title="Text must be at least 300 characters long"
+          placeholder="Enter Post Text"
         ></textarea>
-        <button className="border-2 border-green-500 p-2 rounded-lg">
-          Create New Post
+        <button
+          className="border-2 border-green-500 p-2 rounded-lg"
+          disabled={isLoading}
+        >
+          {isLoading ? "Creating New Post..." : "Create New Post"}
         </button>
       </form>
     </main>

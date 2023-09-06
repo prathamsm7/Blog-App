@@ -14,10 +14,10 @@ function Navbar() {
         {!isAuthenticated ? (
           <>
             <Link to="/signin" style={{ padding: "10px" }}>
-              sign in
+              Sign In
             </Link>
             <Link to="/signup" style={{ padding: "10px" }}>
-              sign up
+              Sign Up
             </Link>
           </>
         ) : (
@@ -27,7 +27,12 @@ function Navbar() {
                 <Link to="/post/new">Create New Post</Link>
               </>
             )}
-            <span onClick={() => dispatch(userLogout())}>Logout</span>
+            <span
+              className="cursor-pointer"
+              onClick={() => dispatch(userLogout())}
+            >
+              Logout
+            </span>
           </>
         )}
       </div>

@@ -4,6 +4,7 @@ import "./index.css";
 import { Provider } from "react-redux";
 import { store } from "./store/store.js";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
 
 import ProtectedRoutes from "./components/ProtectedRoutes.jsx";
 import PublicRoutes from "./components/PublicRoutes.jsx";

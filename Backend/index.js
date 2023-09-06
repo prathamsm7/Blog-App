@@ -33,7 +33,6 @@ const port = process.env.PORT || 8080;
 app.listen(port, async () => {
   try {
     let connection = await connect();
-    // console.log(connection);
     console.log(`Listning on port ${port}`);
   } catch (error) {
     console.log(error.message);
