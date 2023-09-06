@@ -1,8 +1,11 @@
 import axios from "axios";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { createPost } from "../store/slices/BlogSlics";
 
 function NewPost() {
   const [blog, setBlog] = useState({ title: "", text: "" });
+  const dispatch = useDispatch();
 
   const { title, text } = blog;
 
@@ -25,17 +28,17 @@ function NewPost() {
       return;
     }
 
-    try {
-      const response = await axios.post(
-        "http://localhost:8080/api/post/create",
-        { title: trimTitle, text: trimText },
-        { withCredentials: true }
-      );
-      console.log(response);
-      return response.data;
-    } catch (error) {
-      console.log(error);
-    }
+    const response = dispatch(createPost({ title: trimTitle, text: trimText }));
+    response
+      .then(() => {
+        setBlog({ title: "", text: "" });
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
+      })
+      .catch(() => {
+        setBlog({ title: "", text: "" });
+      });
   }
 
   return (

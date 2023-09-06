@@ -1,6 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const apiId = import.meta.env.VITE_API;
+
+console.log("api", apiId);
+
 const initialState = {
   blogs: [],
   isLoading: false,
@@ -9,7 +13,9 @@ const initialState = {
 
 export const getPosts = createAsyncThunk("post/getAll", async () => {
   try {
-    const response = await axios.get("http://localhost:8080/api/post/getposts");
+    const response = await axios.get(`${apiId}/post/getposts`, {
+      withCredentials: true,
+    });
     return response.data;
   } catch (error) {
     return error.response.data;
@@ -22,7 +28,7 @@ export const updatePost = createAsyncThunk(
     try {
       const { id, title, text } = data;
       const response = await axios.patch(
-        `http://localhost:8080/api/post/update/${id}`,
+        `${apiId}/post/update/${id}`,
         { title, text },
         { withCredentials: true }
       );
@@ -33,14 +39,32 @@ export const updatePost = createAsyncThunk(
   }
 );
 
+export const createPost = createAsyncThunk(
+  "post/createPost",
+  async (data, { rejectWithValue }) => {
+    try {
+      const { id, title, text } = data;
+      const response = await axios.post(
+        `${apiId}/post/create`,
+        { title, text },
+        { withCredentials: true }
+      );
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const deletePost = createAsyncThunk(
   "post/deletePost",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await axios.delete(
-        `http://localhost:8080/api/post/${id}`,
-        { withCredentials: true }
-      );
+      const response = await axios.delete(`${apiId}/post/${id}`, {
+        withCredentials: true,
+      });
       return id;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -65,6 +89,21 @@ const blogSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
       });
+
+    builder.addCase(createPost.pending, (state, action) => {
+      state.isLoading = true;
+      state.isError = false;
+    }),
+      builder.addCase(createPost.fulfilled, (state, action) => {
+        state.blogs.push(action.payload);
+        state.isLoading = false;
+        state.isError = false;
+      }),
+      builder.addCase(createPost.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+      });
+
     builder.addCase(updatePost.pending, (state, action) => {
       state.isLoading = true;
       state.isError = false;

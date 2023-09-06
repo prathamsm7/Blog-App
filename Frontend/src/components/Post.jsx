@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { deletePost, updatePost } from "../store/slices/BlogSlics";
+const apiId = import.meta.env.VITE_API;
 
 function Post() {
   const { user, isAuthenticated } = useSelector((store) => store.user);
@@ -19,7 +20,7 @@ function Post() {
 
   const getPost = async () => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/post/${id}`, {
+      const response = await axios.get(`${apiId}/post/${id}`, {
         withCredentials: true,
       });
       post.current = response.data;

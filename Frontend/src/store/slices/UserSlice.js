@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+const apiId = import.meta.env.VITE_API;
 
 const initialState = {
   activeTab: 0,
@@ -18,13 +19,9 @@ export const userLogin = createAsyncThunk(
   "userLogin",
   async (userDetails, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/user/login",
-        userDetails,
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.post(`${apiId}/user/login`, userDetails, {
+        withCredentials: true,
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -36,10 +33,7 @@ export const userSignup = createAsyncThunk(
   "userSignup",
   async (userDetails, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/user/register",
-        userDetails
-      );
+      const response = await axios.post(`${apiId}/user/register`, userDetails);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -48,7 +42,9 @@ export const userSignup = createAsyncThunk(
 );
 
 export const userLogout = createAsyncThunk("userLogout", async () => {
-  const response = await axios.get("http://localhost:8080/api/user/logout", {});
+  const response = await axios.get(`${apiId}/user/logout`, {
+    withCredentials: true,
+  });
   console.log(response);
   return response.data;
 });
