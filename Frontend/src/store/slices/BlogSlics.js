@@ -41,11 +41,16 @@ export const createPost = createAsyncThunk(
   "post/createPost",
   async (data, { rejectWithValue }) => {
     try {
-      const { id, title, text } = data;
+      const { id, title, text, image } = data;
+
+      console.log("data", data);
+
       const response = await axios.post(
-        `${apiId}/post/create`,
-        { title, text },
-        { withCredentials: true }
+        `http://localhost:8080/api/post/create`,
+        data,
+        {
+          withCredentials: true,
+        }
       );
       return response.data;
     } catch (error) {

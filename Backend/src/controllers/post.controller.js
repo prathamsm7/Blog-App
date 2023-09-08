@@ -1,12 +1,20 @@
 const Post = require("../models/Post");
+const upload = require("../multer");
 
 exports.createPost = async (req, res) => {
   try {
-    const { text, title } = req.body;
+    const { text, title } = req.body.content;
+    console.log("body", JSON.parse(req.body.content));
+    // console.log(req.file.path);
+
+    if (!req.file.path) {
+      return res.status(400).json({ message: "Image Not Found" });
+    }
 
     const newPost = await Post.create({
       title: title,
       text: text,
+      image: req.file.path,
       postedBy: req.user.id,
     });
     return res.send(newPost);

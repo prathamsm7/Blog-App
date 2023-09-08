@@ -35,7 +35,7 @@ function Signin() {
     <div className="w-full h-[100svh] flex justify-center items-center">
       <ToastContainer />
 
-      <div className="border w-1/3 bg-slate-500 py-3 px-4 rounded-lg shadow-md text-white">
+      <div className="border md:w-1/3 bg-slate-500 py-3 px-4 rounded-lg shadow-md text-white">
         <h1 className="text-xl font-bold text-center">Sign In</h1>
         <form
           className="rounded px-8 pt-6 pb-8 w-full"

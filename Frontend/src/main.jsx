@@ -15,6 +15,7 @@ import Signup from "./components/Signup.jsx";
 import NewPost from "./components/NewPost.jsx";
 import Post from "./components/Post.jsx";
 import AdminRoutes from "./components/AdminRoutes.jsx";
+import PageNotFound from "./components/PageNotFound";
 
 const AppLayout = () => {
   return (
@@ -59,17 +60,7 @@ const AppLayout = () => {
             exact
           />
         </Route>
-
-        {/* <Route element={<PublicRoutes />}>
-          <Route element={<Login />} path="/login" exact />
-          <Route element={<Signup />} path="/signup" exact />
-          <Route element={<ForgotPassword />} path="/forgotpassword" exact />
-          <Route
-            element={<ResetPassword />}
-            path="/password/reset/:token"
-            exact
-          />
-        </Route> */}
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </Router>
   );

@@ -7,6 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 
 function NewPost() {
   const [blog, setBlog] = useState({ title: "", text: "" });
+  const [image, setImage] = useState("");
   const { isLoading } = useSelector((store) => store.blogs);
 
   const dispatch = useDispatch();
@@ -33,7 +34,11 @@ function NewPost() {
       return;
     }
 
-    const response = dispatch(createPost({ title: trimTitle, text: trimText }));
+    const formData = new FormData();
+    formData.append("content", JSON.stringify(title, text));
+    formData.append("image", image);
+
+    const response = dispatch(createPost(formData));
 
     response.then((res) => {
       setBlog({ title: "", text: "" });
@@ -52,6 +57,14 @@ function NewPost() {
       <h1 className="text-3xl font-bold">Create New Blog Post</h1>
 
       <form action="" className="mt-5" onSubmit={handleSubmit}>
+        <label className="block text-sm font-bold mb-1">Image</label>
+        <input
+          className="shadow border border-blue-300 rounded w-full py-2 px-1 text-black mb-3"
+          type="file"
+          onChange={(e) => setImage(e.target.files[0])}
+          placeholder="Upload Image"
+          required
+        />
         <label className="block text-sm font-bold mb-1">Blog Title</label>
         <input
           className="shadow border border-blue-300 rounded w-full py-2 px-1 text-black mb-3"

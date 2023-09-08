@@ -9,9 +9,12 @@ const {
   getPostById,
 } = require("../controllers/post.controller");
 const { isAuthenticated, isAdmin } = require("../middleware/auth");
+const upload = require("../multer");
 
 //register
-router.route("/create").post(isAuthenticated, isAdmin, createPost);
+router
+  .route("/create")
+  .post(isAuthenticated, isAdmin, upload.single("image"), createPost);
 router.route("/getposts").get(getAllPosts);
 router.route("/:id").get(isAuthenticated, getPostById);
 router.route("/update/:id").patch(isAuthenticated, isAdmin, updatePost);
