@@ -17,7 +17,7 @@ function Post() {
   // Create and configure your Cloudinary instance.
   const cld = new Cloudinary({
     cloud: {
-      cloudName: "dqm9cemhk",
+      cloudName: import.meta.env.VITE_CLOUD_ID,
     },
   });
 
