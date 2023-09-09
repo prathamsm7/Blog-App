@@ -35,7 +35,8 @@ function NewPost() {
     }
 
     const formData = new FormData();
-    formData.append("content", JSON.stringify(title, text));
+    formData.append("title", trimTitle);
+    formData.append("text", trimText);
     formData.append("image", image);
 
     const response = dispatch(createPost(formData));

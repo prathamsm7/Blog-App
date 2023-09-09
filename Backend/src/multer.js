@@ -8,10 +8,6 @@ cloudinary.config({
   api_secret: process.env.API_SECRET,
 });
 
-// console.log(process.env.CLOUD_NAME);
-// console.log(process.env.API_KEY);
-// console.log(process.env.API_SECRET);
-
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   folder: "blog-app",

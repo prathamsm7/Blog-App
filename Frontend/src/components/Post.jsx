@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { deletePost, updatePost } from "../store/slices/BlogSlics";
+import { deletePost, likePost, updatePost } from "../store/slices/BlogSlics";
 import { toast, ToastContainer } from "react-toastify";
 const apiId = import.meta.env.VITE_API;
 
@@ -97,6 +97,20 @@ function Post() {
     });
   };
 
+  const handleLike = async (id) => {
+    let responese = dispatch(likePost(id));
+    responese.then((res) => {
+      if (res.meta.requestStatus == "fulfilled") {
+        setPost({ ...post, likes: res.payload.likes });
+        toast.success(
+          `Post ${res.payload.likes.includes(user._id) ? "Liked" : "Dislike"} `
+        );
+      } else {
+        toast.info("Something went wrong");
+      }
+    });
+  };
+
   useEffect(() => {
     getPost();
   }, []);
@@ -157,9 +171,20 @@ function Post() {
           ) : (
             <>
               <h1 className="text-2xl md:text-3xl font-bold">{title}</h1>
-              <p className="text-base font-semibold text-gray-400 my-3">
-                Posted By: {postedBy?.name}
-              </p>
+              <div className="flex gap-4 my-3">
+                <p className="text-base font-semibold text-gray-400">
+                  Posted By: {postedBy?.name}
+                </p>{" "}
+                <p className="text-sm text-gray-400">
+                  ⌚ {new Date(post.createdAt).toLocaleString()}
+                </p>
+                <p
+                  className="text-green-600 font-semibold hover:cursor-pointer"
+                  onClick={() => handleLike(post._id)}
+                >
+                  👍 {post.likes.length}
+                </p>
+              </div>
             </>
           )}
 

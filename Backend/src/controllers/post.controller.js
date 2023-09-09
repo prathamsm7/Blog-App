@@ -3,9 +3,7 @@ const upload = require("../multer");
 
 exports.createPost = async (req, res) => {
   try {
-    const { text, title } = req.body.content;
-    console.log("body", JSON.parse(req.body.content));
-    // console.log(req.file.path);
+    const { text, title } = req.body;
 
     if (!req.file.path) {
       return res.status(400).json({ message: "Image Not Found" });
@@ -25,7 +23,7 @@ exports.createPost = async (req, res) => {
 
 exports.getAllPosts = async (req, res) => {
   try {
-    const posts = await Post.find();
+    const posts = await Post.find().sort();
 
     return res.send(posts);
   } catch (error) {
@@ -79,6 +77,34 @@ exports.getPostById = async (req, res) => {
     if (!post) {
       return res.status(404).send({ message: "Post not found" });
     }
+
+    return res.send(post);
+  } catch (error) {
+    return res.send(error.message);
+  }
+};
+
+//Likes/Dislikes post
+exports.likeDislike = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    if (!post) {
+      return res.status(404).send({ message: "Post Not Found" });
+    }
+
+    if (post.likes.includes(req.user.id)) {
+      const userIndex = post.likes.indexOf(req.user.id);
+
+      post.likes.splice(userIndex, 1);
+      // await post.save();
+
+      // return res.send(post);
+    } else {
+      post.likes.push(req.user.id);
+    }
+
+    await post.save();
 
     return res.send(post);
   } catch (error) {
