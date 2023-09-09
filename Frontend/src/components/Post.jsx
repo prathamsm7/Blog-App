@@ -150,10 +150,10 @@ function Post() {
       ) : (
         <div className="border border-blue-300 rounded-md p-4">
           {post.image && post.image != "" && (
-            <AdvancedImage
-              cldImg={myImage}
-              plugins={[responsive({ steps: 100 })]}
+            <img
+              src={post.image}
               className="md:h-[500px] mx-auto mb-5 rounded-md"
+              alt="Post Image"
             />
           )}
 
