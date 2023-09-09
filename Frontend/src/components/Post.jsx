@@ -2,12 +2,24 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { deletePost, updatePost } from "../store/slices/BlogSlics";
+import { deletePost, likePost, updatePost } from "../store/slices/BlogSlics";
 import { toast, ToastContainer } from "react-toastify";
 const apiId = import.meta.env.VITE_API;
 
+import { Cloudinary } from "@cloudinary/url-gen";
+
+// Import the responsive plugin
+import { AdvancedImage, responsive } from "@cloudinary/react";
+
 function Post() {
   const { user, isAuthenticated } = useSelector((store) => store.user);
+
+  // Create and configure your Cloudinary instance.
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName: "dqm9cemhk",
+    },
+  });
 
   const { isLoading } = useSelector((store) => store.blogs);
   const { id } = useParams();
@@ -85,12 +97,34 @@ function Post() {
     });
   };
 
+  const handleLike = async (id) => {
+    let responese = dispatch(likePost(id));
+    responese.then((res) => {
+      if (res.meta.requestStatus == "fulfilled") {
+        setPost({ ...post, likes: res.payload.likes });
+        toast.success(
+          `Post ${res.payload.likes.includes(user._id) ? "Liked" : "Dislike"} `
+        );
+      } else {
+        toast.info("Something went wrong");
+      }
+    });
+  };
+
   useEffect(() => {
     getPost();
   }, []);
 
+  // Use the image with public ID, 'sample'.
+  let myImage;
+  if (post.image) {
+    let imgStr = post.image.split("/");
+    let imgId = imgStr[imgStr.length - 1].split(".")[0];
+    myImage = cld.image(imgId);
+  }
+
   return (
-    <div className="px-8 py-8">
+    <div className="md:w-4/6 p-3 md:p-8 m-auto">
       <ToastContainer />
       {loading ? (
         <div className="animate-pulse border border-blue-400 rounded-md p-4">
@@ -114,6 +148,14 @@ function Post() {
         </div>
       ) : (
         <div className="border border-blue-300 rounded-md p-4">
+          {post.image && post.image != "" && (
+            <AdvancedImage
+              cldImg={myImage}
+              plugins={[responsive({ steps: 100 })]}
+              className="md:h-[500px] mx-auto mb-5 rounded-md"
+            />
+          )}
+
           {isEdit ? (
             <>
               <label className="block text-sm font-bold mb-1">Blog Title</label>
@@ -128,10 +170,21 @@ function Post() {
             </>
           ) : (
             <>
-              <h1 className="text-3xl font-bold">{title}</h1>
-              <p className="text-base font-semibold text-gray-400 my-3">
-                Posted By: {postedBy?.name}
-              </p>
+              <h1 className="text-2xl md:text-3xl font-bold">{title}</h1>
+              <div className="flex gap-4 my-3">
+                <p className="text-base font-semibold text-gray-400">
+                  Posted By: {postedBy?.name}
+                </p>{" "}
+                <p className="text-sm text-gray-400">
+                  ⌚ {new Date(post.createdAt).toLocaleString()}
+                </p>
+                <p
+                  className="text-green-600 font-semibold hover:cursor-pointer"
+                  onClick={() => handleLike(post._id)}
+                >
+                  👍 {post.likes.length}
+                </p>
+              </div>
             </>
           )}
 

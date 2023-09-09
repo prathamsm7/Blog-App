@@ -10,7 +10,7 @@ function Blogs() {
   const { blogs, isLoading } = useSelector((store) => store.blogs);
 
   useEffect(() => {
-    dispatch(getPosts());
+    blogs.length <= 0 && dispatch(getPosts());
   }, []);
 
   return (
