@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { deletePost, likePost, updatePost } from "../store/slices/BlogSlics";
 import { toast, ToastContainer } from "react-toastify";
 const apiId = import.meta.env.VITE_API;
+const cloud = import.meta.env.VITE_CLOUD_ID;
 
 import { Cloudinary } from "@cloudinary/url-gen";
 
@@ -17,7 +18,7 @@ function Post() {
   // Create and configure your Cloudinary instance.
   const cld = new Cloudinary({
     cloud: {
-      cloudName: import.meta.env.VITE_CLOUD_ID,
+      cloudName: cloud,
     },
   });
 
